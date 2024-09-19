@@ -1,3 +1,3 @@
-module TrieAlgorithm
+module github.com/victoragudo/go-trie
 
-go 1.20
+go 1.23.1
