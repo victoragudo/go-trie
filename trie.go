@@ -1,4 +1,4 @@
-package main
+package trie
 
 import "fmt"
 
@@ -14,8 +14,8 @@ type Trie struct {
 }
 
 // InitTrie initializes the Trie tree
-func InitTrie() Trie {
-	return Trie{
+func New() *Trie {
+	return &Trie{
 		root: &TrieNode{
 			children: make(map[rune]*TrieNode),
 			isEnd:    false,
