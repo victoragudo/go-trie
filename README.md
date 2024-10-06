@@ -1,85 +1,196 @@
-# Trie Tree in Golang
-This repository contains an implementation of a Trie tree data structure in Golang. The Trie tree is a tree-like data structure that is commonly used for efficient string searching and retrieval operations.
 
-## TrieNode Structure
-The TrieNode struct represents a node in the Trie tree. It has the following properties:
+# Trie Implementation in Go
 
-- children: a map that stores references to child nodes based on the corresponding character.
-isEnd: a boolean flag indicating whether the current node represents the end of a word.
-Trie Structure
-The Trie struct represents the Trie tree itself. It has the following properties:
-- root: a pointer to the root node of the Trie tree.
+This project implements a generic Trie (prefix tree) data structure in Go, supporting generic types. It allows inserting, searching, deleting, and autocompleting words with associated data. The implementation is type-safe and flexible, making it possible to store any kind of data in the trie.
 
-## Functions
+## Features
 
-### InitTrie
-The InitTrie function initializes a new Trie tree and returns it.
+- **Insert**: Add words to the trie with associated data of any type.
+- **Search**: Look up words in the trie and retrieve the associated data.
+- **Delete**: Remove words from the trie.
+- **Autocomplete**: Retrieve all words starting with a given prefix.
+- **CountWords**: Count the total number of words in the trie.
+- **GetAllWords**: Retrieve all the words in the trie along with their data.
+- **Clear**: Reset the trie, removing all words and data.
 
-### Insert
-The Insert function inserts a word into the Trie tree. It takes a string word as a parameter and traverses each character of the word, creating new nodes if necessary.
+## Table of Contents
 
-### Search
-The Search function searches for a word in the Trie tree. It takes a string word as a parameter and traverses each character of the word, checking if the characters exist in the Trie tree. It returns a boolean value indicating whether the word is found in the Trie tree or not.
+- [Trie Implementation in Go](#trie-implementation-in-go)
+    - [Features](#features)
+    - [Installation](#installation)
+    - [Usage](#usage)
+        - [Inserting Words](#inserting-words)
+        - [Searching for Words](#searching-for-words)
+        - [Deleting Words](#deleting-words)
+        - [Autocompleting Words](#autocompleting-words)
+        - [Counting Words](#counting-words)
+        - [Clearing the Trie](#clearing-the-trie)
+    - [Example](#example)
+    - [Running Tests](#running-tests)
+    - [License](#license)
 
-### Delete
-The Delete function deletes a word from the Trie tree. It takes a string word as a parameter and traverses each character of the word to find the corresponding node in the Trie tree. Once found, it marks the node as not the end of a word and removes any intermediate nodes that are no longer used.
+## Installation
 
-### AutoComplete
-The AutoComplete function returns a list of words that match the given prefix. It takes a string prefix as a parameter and finds the corresponding node in the Trie tree. It then traverses all nodes starting from the prefix node and collects complete words.
+To use this Trie implementation, you need to have Go installed. You can download and install Go from [here](https://golang.org/dl/).
 
-### CountWords
-The CountWords function counts the number of words in the Trie tree. It performs a depth-first search (DFS) traversal on the Trie tree and increments a count for each node that represents the end of a word.
+### Clone the Repository
 
-### PrintTrie
-The PrintTrie function prints the entire Trie tree with branches and leaves. It uses a helper function printNode to recursively print each node, prefixing each line with appropriate indentation.
+```bash
+git clone https://github.com/yourusername/trie-go
+cd trie-go
+```
+
+### Install Dependencies
+
+This project uses `testify` for testing. You can install it by running:
+
+```bash
+go get github.com/stretchr/testify
+```
 
 ## Usage
-Here's an example of how to use the Trie tree:
 
-```
-trie := InitTrie()
+The trie can store any type of data associated with words. Below are examples showing how to use the `Trie` data structure with different types.
 
-// Insert words
-trie.Insert("apple")
-trie.Insert("banana")
-trie.Insert("orange")
+### Inserting Words
 
-// Search for words
-fmt.Println(trie.Search("apple"))   // Output: true
-fmt.Println(trie.Search("banana"))  // Output: true
-fmt.Println(trie.Search("orange"))  // Output: true
-fmt.Println(trie.Search("grape"))   // Output: false
+You can insert words into the trie, associating each word with any type of data. For example:
 
-// Auto-complete
-fmt.Println(trie.AutoComplete("ap"))  // Output: [apple]
-fmt.Println(trie.AutoComplete("ban")) // Output: [banana]
-
-// Delete word
-trie.Delete("apple")
-fmt.Println(trie.Search("apple"))   // Output: false
-
-// Count words
-fmt.Println(trie.CountWords()) // Output: 2
-
-// Print Trie
-trie.PrintTrie()
+```go
+trie := New[int]()
+trie.Insert("apple", 5)
+trie.Insert("banana", 10)
 ```
 
-This will output:
+### Searching for Words
 
+You can search for words in the trie and retrieve their associated data:
+
+```go
+data, found := trie.Search("apple")
+if found {
+    fmt.Println("Found 'apple' with data:", data)
+} else {
+    fmt.Println("'apple' not found")
+}
 ```
-true
-true
-true
-false
-[apple]
-[banana]
-false
-2
-├──b
-│  ├──a
-│  │  └──n
-│  │     ├──a
-│  │     │  └──n
-│  │     │    
+
+### Deleting Words
+
+Words can be deleted from the trie:
+
+```go
+trie.Delete("banana")
 ```
+
+### Autocompleting Words
+
+You can find all words that match a given prefix:
+
+```go
+results := trie.AutoComplete("app")
+for _, result := range results {
+    fmt.Printf("Word: %s, Data: %v\n", result.Word, result.Data)
+}
+```
+
+### Counting Words
+
+To count the total number of words stored in the trie:
+
+```go
+count := trie.CountWords()
+fmt.Println("Total words in trie:", count)
+```
+
+### Clearing the Trie
+
+To clear all data from the trie:
+
+```go
+trie.Clear()
+```
+
+## Example
+
+Here is a full example that demonstrates how to create a trie, insert words with different types of data, search, and autocomplete:
+
+```go
+package main
+
+import (
+    "fmt"
+)
+
+type Person struct {
+    Name string
+    Age  int
+}
+
+func main() {
+    // Initialize a Trie with int data
+    trieInt := New[int]()
+    trieInt.Insert("one", 1)
+    trieInt.Insert("two", 2)
+    
+    // Search for a word
+    data, found := trieInt.Search("one")
+    if found {
+        fmt.Println("Found 'one' with data:", data)
+    } else {
+        fmt.Println("'one' not found")
+    }
+
+    // Autocomplete example
+    trieInt.Insert("three", 3)
+    results := trieInt.AutoComplete("t")
+    for _, result := range results {
+        fmt.Printf("Word: %s, Data: %d\n", result.Word, result.Data)
+    }
+
+    // Trie with custom struct data
+    trieStruct := New[Person]()
+    trieStruct.Insert("john", Person{Name: "John", Age: 30})
+    trieStruct.Insert("jane", Person{Name: "Jane", Age: 25})
+
+    person, found := trieStruct.Search("john")
+    if found {
+        fmt.Printf("Found 'john' with data: Name=%s, Age=%d\n", person.Name, person.Age)
+    } else {
+        fmt.Println("'john' not found")
+    }
+}
+```
+
+## Running Tests
+
+This project includes a suite of tests to ensure that all functionality works as expected. The tests cover insertion, searching, deletion, autocomplete, and counting words for various data types (`int`, `float64`, structs, slices, etc.).
+
+### Run Tests
+
+To run the tests, you can use the following command:
+
+```bash
+go test ./...
+```
+
+The tests use the `testify` library for assertions. If you haven't installed it yet, you can do so by running:
+
+```bash
+go get github.com/stretchr/testify
+```
+
+### Test Examples
+
+Here are a few test cases included in the project:
+
+- **TestInsertAndSearchInt**: Verifies the insertion and search functionality for `int` data.
+- **TestInsertAndSearchFloat**: Tests insertion and search for `float64` data.
+- **TestInsertAndSearchStruct**: Ensures that the trie works with custom structs.
+- **TestAutoCompleteWithStruct**: Validates that autocomplete works with struct data.
+
+You can find the full list of tests in the `trie_test.go` file.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
