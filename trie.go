@@ -37,7 +37,6 @@ func (trie *Trie[T]) Insert(word string, data T) {
 				char:     char,
 				children: make(map[rune]*Node[T]),
 				isEnd:    false,
-				data:     data,
 			}
 		}
 
